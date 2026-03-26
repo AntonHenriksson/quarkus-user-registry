@@ -1,7 +1,7 @@
 package service;
 
 import domain.AppUser;
-import dto.*;
+import dto.appuser.*;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

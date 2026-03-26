@@ -1,10 +1,10 @@
 package mapper;
 
 import domain.AppUser;
-import dto.AppUserRequest;
-import dto.AppUserResponse;
-import dto.AppUserSummaryResponse;
-import dto.AppUserUpdateRequest;
+import dto.appuser.AppUserRequest;
+import dto.appuser.AppUserResponse;
+import dto.appuser.AppUserSummaryResponse;
+import dto.appuser.AppUserUpdateRequest;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package dto;
+package dto.appuser;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -1,4 +1,4 @@
-package dto;
+package dto.appuser;
 
 import java.time.LocalDate;
 

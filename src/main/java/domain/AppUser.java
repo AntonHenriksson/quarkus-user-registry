@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @Entity
@@ -13,6 +14,12 @@ public class AppUser extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
+
+    //Roles for jwt
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    public Set<String> roles;
 
     //Login details
     @Column(name = "user_name", unique = true, length = 50)
@@ -43,5 +50,9 @@ public class AppUser extends PanacheEntityBase {
         return find("email", email).firstResult();
     }
 
+    //Find user by userName
+    public static AppUser findByUserName(String userName) {
+        return find("userName", userName).firstResult();
+    }
 
 }

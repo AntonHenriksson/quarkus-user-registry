@@ -2,7 +2,7 @@ package service;
 
 
 import domain.AppUser;
-import dto.*;
+import dto.appuser.*;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;

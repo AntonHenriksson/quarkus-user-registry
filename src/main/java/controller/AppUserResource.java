@@ -1,8 +1,8 @@
 package controller;
 
-import dto.AppUserRequest;
-import dto.AppUserUpdatePasswordRequest;
-import dto.AppUserUpdateRequest;
+import dto.appuser.AppUserRequest;
+import dto.appuser.AppUserUpdatePasswordRequest;
+import dto.appuser.AppUserUpdateRequest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;

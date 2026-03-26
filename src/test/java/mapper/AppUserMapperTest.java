@@ -1,7 +1,7 @@
 package mapper;
 
 import domain.AppUser;
-import dto.AppUserRequest;
+import dto.appuser.AppUserRequest;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
