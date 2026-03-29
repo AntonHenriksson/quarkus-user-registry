@@ -4,8 +4,9 @@ package domain;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -19,13 +20,13 @@ public class AppUser extends PanacheEntityBase {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    public Set<String> roles;
+    public Set<String> roles = new HashSet<>();
 
     //Login details
     @Column(name = "user_name", unique = true, length = 50)
     public String userName;
 
-    @Column(name = "password", length = 60)
+    @Column(name = "password", length = 72)
     public String password;
 
     //Email
@@ -43,7 +44,7 @@ public class AppUser extends PanacheEntityBase {
 
     //Created at
     @Column(name = "created_at")
-    public LocalDateTime createdAt = LocalDateTime.now();
+    public Instant createdAt = Instant.now();
 
     //Find user by email
     public static AppUser findByEmail(String email) {

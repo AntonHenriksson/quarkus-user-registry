@@ -14,7 +14,7 @@ public record AppUserRequest(
         String userName,
         @NotBlank(message = "Password must be at least 8 characters long and include both lowercase and uppercase letters, as well as at least one number.")
         @Pattern(
-                regexp = "^(?=.*\\p{Lu})(?=.*\\p{Ll})(?=.*\\d).{8,}$",
+                regexp = "^(?=.*\\p{Lu})(?=.*\\p{Ll})(?=.*\\d).{8,72}$",
                 message = "Password must be at least 8 characters long and include both lowercase and uppercase letters, as well as at least one number."
         )
         String password,
@@ -34,7 +34,7 @@ public record AppUserRequest(
         LocalDate birth,
         @NotBlank(message = "Address must be included.")
         @Pattern(
-                regexp = "^[a-zA-ZåäöÅÄÖ\\s-]{4,25}$",
+                regexp = "^[a-zA-ZåäöÅÄÖ0-9\\s-]{4,25}$",
                 message = "Must have between 4 and 25 characters.")
         String address,
         @NotBlank(message = "City must be included.")

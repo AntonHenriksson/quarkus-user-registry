@@ -4,7 +4,11 @@ import domain.AppUser;
 import dto.appuser.*;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
+import io.quarkus.test.security.jwt.Claim;
+import io.quarkus.test.security.jwt.JwtSecurity;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +33,7 @@ public class AppUserServiceTest {
     }
 
 
+    //Test that you can create new users
     @Test
     @TestTransaction
     void createUserTest() {
@@ -42,6 +47,7 @@ public class AppUserServiceTest {
 
     }
 
+    //Test that you can get users by email
     @Test
     @TestTransaction
     void getUserByEmail() {
@@ -52,6 +58,7 @@ public class AppUserServiceTest {
         assertEquals("kalle", response.firstName());
     }
 
+    //Test that the password hash is working
     @Test
     @TestTransaction
     void passwordHashTest() {
@@ -63,8 +70,14 @@ public class AppUserServiceTest {
 
     }
 
+    //Test that users can update themself
     @Test
     @TestTransaction
+    @TestSecurity(user = "kalleanka", roles = {"USER"})
+    @JwtSecurity(claims = {
+            @Claim(key = "upn", value = "kalleanka"),
+            @Claim(key = "sub", value = "uuid")
+    })
     void updateUserPatch() {
         AppUserRequest request = createDefaultRequest();
         AppUserResponse response = service.createUser(request);
@@ -89,8 +102,76 @@ public class AppUserServiceTest {
         assertEquals("adam", userAfterPatch.firstName);
     }
 
+    //Test that ADMIN role can update other users
     @Test
     @TestTransaction
+    @TestSecurity(user = "Anna", roles = {"ADMIN"})
+    @JwtSecurity(claims = {
+            @Claim(key = "upn", value = "Anna"),
+            @Claim(key = "sub", value = "uuid")
+    })
+    void updateUserPatchAdmin() {
+        AppUserRequest request = createDefaultRequest();
+        AppUserResponse response = service.createUser(request);
+
+        AppUserUpdateRequest updateRequest = new AppUserUpdateRequest(
+                null,
+                null,
+                "Adam",
+                null,
+                null,
+                null,
+                null
+        );
+        service.updateUser(response.id(), updateRequest);
+        AppUser userAfterPatch = AppUser.findById(response.id());
+        assertNotNull(userAfterPatch.userName);
+        assertNotNull(userAfterPatch.birth);
+        assertNotNull(userAfterPatch.city);
+        assertNotEquals("kalle", userAfterPatch.firstName);
+        assertEquals("anka", userAfterPatch.lastName);
+        assertEquals("kalle@mail.com", userAfterPatch.email);
+        assertEquals("adam", userAfterPatch.firstName);
+    }
+
+
+    //Test if jwt authentication can deny wrongful doing
+    @Test
+    @TestTransaction
+    @TestSecurity(user = "Neo", roles = {"USER"})
+    @JwtSecurity(claims = {
+            @Claim(key = "upn", value = "Neo"),
+            @Claim(key = "sub", value = "uuid")
+    })
+    void updateUserPatchAuthFail() {
+        AppUserRequest request = createDefaultRequest();
+        AppUserResponse response = service.createUser(request);
+
+        AppUserUpdateRequest updateRequest = new AppUserUpdateRequest(
+                null,
+                null,
+                "Adam",
+                null,
+                null,
+                null,
+                null
+        );
+        //throw Forbidden because the jwt is Neo and not kalleanka
+        assertThrows(ForbiddenException.class, () ->
+                service.updateUser(response.id(), updateRequest));
+        AppUser userAfterFailedPatch = AppUser.findById(response.id());
+        //double check that the data isnt changed
+        assertEquals("kalleanka", userAfterFailedPatch.userName);
+    }
+
+    //Test that a user can update the password for itself
+    @Test
+    @TestTransaction
+    @TestSecurity(user = "kalleanka", roles = {"USER"})
+    @JwtSecurity(claims = {
+            @Claim(key = "upn", value = "kalleanka"),
+            @Claim(key = "sub", value = "uuid")
+    })
     void updatePassword() {
         AppUserRequest request = createDefaultRequest();
         AppUserResponse response = service.createUser(request);
@@ -109,11 +190,45 @@ public class AppUserServiceTest {
         assertEquals(userAfterPatch.password, newPassword);
     }
 
+    //Test if jwt authentication can deny wrongful doing
+    @Test
+    @TestTransaction
+    @TestSecurity(user = "Neo", roles = {"USER"})
+    @JwtSecurity(claims = {
+            @Claim(key = "upn", value = "Neo"),
+            @Claim(key = "sub", value = "uuid")
+    })
+    void updatePasswordAuthFail() {
+        AppUserRequest request = createDefaultRequest();
+        AppUserResponse response = service.createUser(request);
+
+        AppUser userBeforePatch = AppUser.findById(response.id());
+        String oldPassword = userBeforePatch.password;
+
+        //throw Forbidden because the jwt is Neo and not kalleanka
+        assertThrows(ForbiddenException.class, () -> service.updatePassword(response.id(),
+                new AppUserUpdatePasswordRequest("kAka123!")));
+
+
+        //double checking the data didnt change
+        AppUser userAfterPatch = AppUser.findById(response.id());
+        String newPassword = userAfterPatch.password;
+        assertEquals(oldPassword, newPassword);
+    }
+
+
+    //Test that get actually fails when id or mail is no-exist
     @Test
     @TestTransaction
     void getFail() {
-        assertThrows(NotFoundException.class, () -> service.getById("not a id"));
-        assertThrows(NotFoundException.class, () -> service.getByEmail("_notmail_"));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.getById("not a id"));
+        NotFoundException exceptionTwo = assertThrows(NotFoundException.class, () -> service.getByEmail("_notmail_"));
+
+        // Using this to confirm there is no blind spot here
+        // where the JWT would throw another exception
+        
+        assertEquals("User not found", exception.getMessage());
+        assertEquals("User not found", exceptionTwo.getMessage());
 
     }
 }

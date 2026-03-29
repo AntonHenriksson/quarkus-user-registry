@@ -10,7 +10,7 @@ import org.jboss.logging.Logger;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
+@ApplicationScoped
 public class GlobalExceptionHandler {
     private static final Logger LOG = Logger.getLogger(GlobalExceptionHandler.class);
 

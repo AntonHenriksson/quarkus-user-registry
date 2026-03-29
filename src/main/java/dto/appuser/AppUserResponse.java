@@ -1,5 +1,6 @@
 package dto.appuser;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 public record AppUserResponse(
@@ -11,6 +12,6 @@ public record AppUserResponse(
         LocalDate birth,
         String address,
         String city,
-        java.time.LocalDateTime createdAt
+        Instant createdAt
 ) {
 }
