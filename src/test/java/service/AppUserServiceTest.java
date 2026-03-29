@@ -226,7 +226,7 @@ public class AppUserServiceTest {
 
         // Using this to confirm there is no blind spot here
         // where the JWT would throw another exception
-        
+
         assertEquals("User not found", exception.getMessage());
         assertEquals("User not found", exceptionTwo.getMessage());
 

@@ -53,6 +53,7 @@ public class AuthResourceTest {
         );
     }
 
+    //Test that login works with correct login-details
     @Test
     void loginTest() {
         AppUser appUser = AppUser.findAll().firstResult();
@@ -76,7 +77,7 @@ public class AuthResourceTest {
                 .body("token", notNullValue());
     }
 
-    //Test if wrong password
+    //Test that login fails when password is incorrect
     @Test
     void loginTestFailPassword() {
 
@@ -100,6 +101,7 @@ public class AuthResourceTest {
                 .statusCode(401);
     }
 
+    //Test that login fails when username is incorrect
     @Test
     void loginTestFailUserName() {
 

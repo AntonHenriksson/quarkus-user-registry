@@ -30,6 +30,7 @@ public class AppUserResourceTest {
         AppUser.deleteAll();
     }
 
+
     @Transactional
     static public AppUserRequest createDefaultUser() {
         return new AppUserRequest(
@@ -44,7 +45,7 @@ public class AppUserResourceTest {
         );
     }
 
-
+    //Test to create a user with HTTP
     @Test
     @Transactional
     void createUser() {
@@ -70,7 +71,7 @@ public class AppUserResourceTest {
                 .path("id");
     }
 
-    //Test for get user with id as ADMIN
+    //Test for get user with id as ADMIN with HTTP
     @Test
     @Transactional
     @TestSecurity(user = "testAdmin", roles = {"ADMIN"})
@@ -85,7 +86,7 @@ public class AppUserResourceTest {
 
     }
 
-    //Test that get user by Id fails if not ADMIN
+    //Test that get user by Id fails if not ADMIN with HTTP
     @Test
     @Transactional
     @TestSecurity(user = "notAdmin", roles = {"USER"})

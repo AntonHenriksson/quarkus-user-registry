@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AppUserMapperTest {
 
+    //Testing that the mapper can clean and convert to lowercase
     @Test
     void cleanAndLc() {
         AppUserRequest request = new AppUserRequest(
@@ -31,6 +32,7 @@ public class AppUserMapperTest {
         assertEquals("kalle@mail.com", entity.email);
     }
 
+    //Test that the mapper can handle null without exploding
     @Test
     void testHandleNullUserName() {
         AppUserRequest request = new AppUserRequest(null, "Lösen123!", "mail@mail.com", "Kalle", "Anka", null, "Gatan 1", "Staden");

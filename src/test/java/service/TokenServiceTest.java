@@ -19,6 +19,7 @@ public class TokenServiceTest {
     @Inject
     JWTParser jwtParser;
 
+    //Test to generate JWT token
     @Test
     void testGenerateToken() throws Exception {
         //Arrange
